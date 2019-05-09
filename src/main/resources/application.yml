@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://120.78.185.50:3306/backend?useSSL=false&characterEncoding=utf8&serverTimezone=GMT
+  thymeleaf:
+    encoding: UTF-8
+    cache: false
+    mode: HTML5
+    servlet:
+      content-type: text/html
+    suffix: .html
+    prefix: classpath:/templates/admin/
+  mvc:
+    static-path-pattern: /**
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  path: /Users/chenghongzhi/GitHub/demo/src/main/resources/static/upload/
+  url: localhost:8080/static/upload/
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:/*Mapper.xml
