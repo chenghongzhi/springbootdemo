@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.model.Report;
 import com.example.service.ReportService;
 import com.example.util.FileUtil;
@@ -34,11 +35,12 @@ public class ReportController extends BaseController {
 
     @RequiresPermissions("report:list")
     @GetMapping("/list")
-    public String list(Model model){
+    public String list(@RequestParam(defaultValue = "1")Integer pageNo, Model model){
         if (getUser().getRoleId()==2) {
-            model.addAttribute("reports",reportService.selectAllStudent(getUser().getUsername()));
+            model.addAttribute("pages",reportService.selectAllStudent(pageNo,getUser().getUsername()));
         } else {
-            model.addAttribute("reports",reportService.selectAll());
+            IPage<Report> iPage=reportService.selectAllByPage(pageNo);
+            model.addAttribute("pages",iPage);
         }
         return "report/list";
     }

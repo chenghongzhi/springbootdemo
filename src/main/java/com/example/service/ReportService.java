@@ -1,6 +1,8 @@
 package com.example.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mapper.ReportMapper;
 import com.example.model.Report;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +35,12 @@ public class ReportService {
         return reportMapper.selectByCode(code);
     }
 
-    public List<Report> selectAllStudent(String name){
+    public IPage<Report> selectAllStudent(Integer pageNo,String name){
         QueryWrapper<Report> wrapper=new QueryWrapper<>();
         wrapper.lambda().eq(Report::getStudentName,name);
         wrapper.orderByAsc("id");
-        return reportMapper.selectList(wrapper);
+        Page<Report> page=new Page<>(pageNo,1);
+        return reportMapper.selectPage(page,wrapper);
     }
 
     public List<Report> selectAllTeacher(String name){
@@ -50,6 +53,11 @@ public class ReportService {
         QueryWrapper<Report> wrapper=new QueryWrapper<>();
         wrapper.orderByAsc("status");
         return reportMapper.selectList(wrapper);
+    }
+
+    public IPage<Report> selectAllByPage(Integer pageNo){
+        Page<Report> page=new Page<>(pageNo,5);
+        return reportMapper.selectPage(page,null);
     }
 
     public void update(Report report){

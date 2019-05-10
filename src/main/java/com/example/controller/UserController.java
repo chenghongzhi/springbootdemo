@@ -1,6 +1,7 @@
 package com.example.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.model.Role;
 import com.example.model.User;
 import com.example.service.RoleService;
@@ -89,9 +90,9 @@ public class UserController extends BaseController{
 
     @RequiresPermissions("user:list")
     @GetMapping("/list")
-    public String list(Model model){
-        List<User> users=userService.selectAll();
-        model.addAttribute("users",users);
+    public String list(@RequestParam(defaultValue = "1") Integer pageNo,Model model){
+        IPage<User> iPage=userService.selectAllByPage(pageNo);
+        model.addAttribute("pages",iPage);
         return "user/user";
     }
 
