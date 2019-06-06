@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <div th:fragment="menu">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/user/index">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="fas fa-laugh-wink"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">Admin</div>
+                </a>
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Interface
+                </div>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/user/index">
+                        <i class="fas fa-fw fa-weight"></i>
+                        <span>仪表盘</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/report/list">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>报告管理</span></a>
+                </li>
+                <li class="nav-item active" shiro:hasRole="管理员">
+                    <a class="nav-link" href="/user/list">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>用户列表</span></a>
+                </li>
+<!--                <li class="nav-item active" shiro:hasRole="管理员">-->
+<!--                    <a class="nav-link" href="/permission/list">-->
+<!--                        <i class="fas fa-fw fa-chart-area"></i>-->
+<!--                        <span>权限管理</span></a>-->
+<!--                </li>-->
+                <li class="nav-item active">
+                    <a class="nav-link" href="/user/logout">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>登出</span></a>
+                </li>
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
+            </ul>
+    </div>
+</html>

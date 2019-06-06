@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <div th:replace="layout/head::head"></div>
+    <body id="page-top">
+        <div id="wrapper">
+            <div th:replace="layout/menu::menu"></div>
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <div th:replace="layout/user_info::user_info"></div>
+                    <div th:include="::content"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

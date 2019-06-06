@@ -3,7 +3,7 @@
 <mapper namespace="com.example.mapper.UserMapper">
 
     <select id="selectByName" resultType="com.example.model.User">
-        select * from user where username=#{name}
+        select * from user where username=#{username}
     </select>
 
 </mapper>

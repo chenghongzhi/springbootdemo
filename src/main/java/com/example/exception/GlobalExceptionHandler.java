@@ -31,7 +31,6 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView=new ModelAndView();
         modelAndView.addObject("errorCode",getStatus(request));
         modelAndView.setViewName("error/error");
-        System.out.println("异常处理");
         return modelAndView;
     }
 

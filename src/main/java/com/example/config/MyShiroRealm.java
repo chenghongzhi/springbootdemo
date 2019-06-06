@@ -13,6 +13,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,10 +22,13 @@ import java.util.stream.Collectors;
 public class MyShiroRealm extends AuthorizingRealm {
 
     @Autowired
+    @Lazy
     private UserService userService;
     @Autowired
+    @Lazy
     private RoleService roleService;
     @Autowired
+    @Lazy
     private PermissionService permissionService;
     // 授权
     @Override

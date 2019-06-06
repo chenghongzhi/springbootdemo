@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+    <!-- th:fragment 定义需要引入的代码块，该div包含的内容即为引用的公共内容 -->
+    <div th:fragment="user_info">
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <ul class="navbar-nav ml-auto">
+                <div class="topbar-divider d-none d-sm-block"></div>
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${session.name}">欢迎登录</span>
+                        <img class="img-profile rounded-circle" src="http://ximg.linkedbyx.com/default-avatar.png">
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</html>

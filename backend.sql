@@ -1,20 +1,20 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 阿里云
+ Source Server         : mac
  Source Server Type    : MySQL
- Source Server Version : 50725
- Source Host           : 120.78.185.50:3306
+ Source Server Version : 80015
+ Source Host           : localhost:3306
  Source Schema         : backend
 
  Target Server Type    : MySQL
- Target Server Version : 50725
+ Target Server Version : 80015
  File Encoding         : 65001
 
- Date: 09/05/2019 17:03:25
+ Date: 27/05/2019 15:24:21
 */
 
-SET NAMES utf8mb4;
+SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
@@ -53,27 +53,15 @@ COMMIT;
 DROP TABLE IF EXISTS `report`;
 CREATE TABLE `report` (
   `id` int(25) NOT NULL AUTO_INCREMENT,
-  `fileurl` varchar(255) NOT NULL,
-  `filepath` varchar(255) NOT NULL,
   `in_time` datetime NOT NULL,
   `content` varchar(255) DEFAULT NULL,
   `remark` varchar(255) DEFAULT NULL,
   `teacher_name` varchar(25) DEFAULT NULL,
   `student_name` varchar(25) NOT NULL,
-  `code` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
+  `student_id` int(25) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of report
--- ----------------------------
-BEGIN;
-INSERT INTO `report` VALUES (3, 'localhost:8080/static/upload/实验5、磁盘管理.docx', '/Users/chenghongzhi/GitHub/demo/src/main/resources/static/upload/实验5、磁盘管理-1557298360107.docx', '2019-05-08 10:18:37', '123456					', '11', 'admin', 'admin', '', '已查看');
-INSERT INTO `report` VALUES (4, 'localhost:8080/static/upload/实验5、磁盘管理-1557298627557.docx', '/Users/chenghongzhi/GitHub/demo/src/main/resources/static/upload/实验5、磁盘管理-1557298627557.docx', '2019-05-08 08:21:17', '113', '', 'admin', 'admin', '', '未查看');
-INSERT INTO `report` VALUES (5, '/report/download/0b607ed717684029a3f132af5f7fb474', '/Users/chenghongzhi/GitHub/demo/src/main/resources/static/upload/实验5、磁盘管理-1557304734561.docx', '2019-05-08 08:50:33', '作业提交', '好的', 'admin', 'test', '0b607ed717684029a3f132af5f7fb474', '未查看');
-INSERT INTO `report` VALUES (6, '/report/download/c51816371fd4468198a5be1b07261e25', '/Users/chenghongzhi/GitHub/demo/src/main/resources/static/upload/实验5、磁盘管理-1557309714258.docx', '2019-05-08 10:05:02', '', '好的', 'teacher', 'test', 'c51816371fd4468198a5be1b07261e25', '未查看');
-COMMIT;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for role
@@ -83,15 +71,16 @@ CREATE TABLE `role` (
   `id` int(25) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of role
 -- ----------------------------
 BEGIN;
-INSERT INTO `role` VALUES (1, '老师');
+INSERT INTO `role` VALUES (1, '指导老师');
 INSERT INTO `role` VALUES (2, '学生');
-INSERT INTO `role` VALUES (3, '管理员');
+INSERT INTO `role` VALUES (3, '答辩组组长');
+INSERT INTO `role` VALUES (4, '管理员');
 COMMIT;
 
 -- ----------------------------
@@ -111,17 +100,41 @@ INSERT INTO `role_permission` VALUES (1, 11);
 INSERT INTO `role_permission` VALUES (2, 8);
 INSERT INTO `role_permission` VALUES (2, 9);
 INSERT INTO `role_permission` VALUES (2, 11);
-INSERT INTO `role_permission` VALUES (3, 4);
-INSERT INTO `role_permission` VALUES (3, 5);
-INSERT INTO `role_permission` VALUES (3, 6);
-INSERT INTO `role_permission` VALUES (3, 7);
-INSERT INTO `role_permission` VALUES (3, 8);
-INSERT INTO `role_permission` VALUES (3, 9);
-INSERT INTO `role_permission` VALUES (3, 10);
-INSERT INTO `role_permission` VALUES (3, 11);
-INSERT INTO `role_permission` VALUES (3, 12);
+INSERT INTO `role_permission` VALUES (4, 4);
+INSERT INTO `role_permission` VALUES (4, 5);
+INSERT INTO `role_permission` VALUES (4, 6);
+INSERT INTO `role_permission` VALUES (4, 7);
+INSERT INTO `role_permission` VALUES (4, 8);
+INSERT INTO `role_permission` VALUES (4, 9);
+INSERT INTO `role_permission` VALUES (4, 10);
+INSERT INTO `role_permission` VALUES (4, 11);
+INSERT INTO `role_permission` VALUES (4, 12);
 INSERT INTO `role_permission` VALUES (1, 12);
 COMMIT;
+
+-- ----------------------------
+-- Table structure for student_report
+-- ----------------------------
+DROP TABLE IF EXISTS `student_report`;
+CREATE TABLE `student_report` (
+  `report_id` int(25) NOT NULL,
+  `student_id` int(255) NOT NULL,
+  `fileurl` varchar(255) NOT NULL,
+  `filepath` varchar(255) NOT NULL,
+  `in_time` datetime NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `report_type` varchar(255) NOT NULL,
+  `url` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for teacher_student
+-- ----------------------------
+DROP TABLE IF EXISTS `teacher_student`;
+CREATE TABLE `teacher_student` (
+  `teacher_id` int(11) DEFAULT NULL,
+  `student_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- ----------------------------
 -- Table structure for user
@@ -132,17 +145,16 @@ CREATE TABLE `user` (
   `username` varchar(25) NOT NULL,
   `password` varchar(255) NOT NULL,
   `in_time` timestamp NULL DEFAULT NULL,
-  `role_id` int(25) DEFAULT NULL,
+  `role_id` int(25) NOT NULL,
+  `role_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES (9, 'admin', 'df655ad8d3229f3269fad2a8bab59b6c', '2019-05-08 05:05:48', 3);
-INSERT INTO `user` VALUES (14, 'test', 'cbce3bcfb2e685657f30b435a5503190', '2019-05-08 05:48:14', 2);
-INSERT INTO `user` VALUES (15, 'teacher', 'd77953eb641804921d0cd1e705a1e29f', '2019-05-08 09:58:48', 1);
+INSERT INTO `user` VALUES (28, 'admin', 'df655ad8d3229f3269fad2a8bab59b6c', '2019-05-26 08:55:28', 4, '管理员');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

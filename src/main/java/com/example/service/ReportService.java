@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.mapper.ReportMapper;
 import com.example.model.Report;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,10 @@ import java.util.List;
 public class ReportService {
     @Autowired
     private ReportMapper reportMapper;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public void insert(Report report){
         report.setInTime(new Date());
@@ -39,7 +45,7 @@ public class ReportService {
         QueryWrapper<Report> wrapper=new QueryWrapper<>();
         wrapper.lambda().eq(Report::getStudentName,name);
         wrapper.orderByAsc("id");
-        Page<Report> page=new Page<>(pageNo,1);
+        Page<Report> page=new Page<>(pageNo,8);
         return reportMapper.selectPage(page,wrapper);
     }
 
@@ -56,7 +62,7 @@ public class ReportService {
     }
 
     public IPage<Report> selectAllByPage(Integer pageNo){
-        Page<Report> page=new Page<>(pageNo,5);
+        Page<Report> page=new Page<>(pageNo,8);
         return reportMapper.selectPage(page,null);
     }
 

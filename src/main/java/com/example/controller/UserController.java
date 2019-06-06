@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.model.Role;
 import com.example.model.User;
 import com.example.service.RoleService;
+import com.example.service.StudentReportService;
 import com.example.service.UserService;
 import com.sun.management.OperatingSystemMXBean;
 import org.apache.shiro.SecurityUtils;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.util.StringUtils;
 
+import javax.servlet.http.HttpSession;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
 import java.util.Iterator;
@@ -46,6 +48,8 @@ public class UserController extends BaseController{
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private StudentReportService studentReportService;
     private Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/login")
@@ -58,19 +62,20 @@ public class UserController extends BaseController{
     }
 
     @GetMapping("/index")
-    public String index(Model model){
-        model.addAttribute("username", getUser());
+    public String index(HttpSession session){
+        session.setAttribute("name",getUser().getUsername());
         return "index";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password")String password, Model model){
+    public String login(@RequestParam("username") String username, @RequestParam("password")String password, Model model, HttpSession session){
         UsernamePasswordToken token=new UsernamePasswordToken(username,password);
         Subject subject= SecurityUtils.getSubject();
         try {
             if (!subject.isAuthenticated()) {
                 //进行验证，这里可以捕获异常，然后返回对应信息
                 subject.login(token);
+                session.setAttribute("name",username);
             }
         } catch (AuthenticationException e) {
             log.error(e.getMessage());
@@ -107,6 +112,7 @@ public class UserController extends BaseController{
     @RequiresPermissions("user:add")
     @PostMapping("/add")
     public String add(User user){
+        user.setRoleName(roleService.selectById(user.getRoleId()).getName());
         userService.insert(user);
         return "redirect:/user/list";
     }
@@ -139,6 +145,7 @@ public class UserController extends BaseController{
     @GetMapping("/delete")
     public String delete(Integer id){
         userService.delete(id);
+        studentReportService.deleteByStudentId(id);
         return "redirect:/user/list";
     }
 
@@ -147,6 +154,10 @@ public class UserController extends BaseController{
         return "unauthorized";
     }
 
+    @GetMapping("layout")
+    public String testLayout1(){
+        return "layout/layout";
+    }
 
 
 }
