@@ -22,6 +22,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String,String> map=new HashMap<>();
         map.put("/static/**", "anon");
+        map.put("/common/captcha", "anon");
         map.put("/user/logut","logout");
         map.put("/**","authc");
         shiroFilterFactoryBean.setLoginUrl("/user/login");

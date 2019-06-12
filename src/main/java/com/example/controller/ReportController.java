@@ -59,18 +59,63 @@ public class ReportController extends BaseController {
 
     @RequiresPermissions("report:add")
     @PostMapping("/add")
-    public String add(@RequestParam("proposal") MultipartFile proposal,
-                      @RequestParam("file") MultipartFile file,
-                      @RequestParam("finalReport") MultipartFile finalReport,
-                      @RequestParam("reply") MultipartFile reply,
-                      Report report,Model model){
+    public String add(
+            @RequestParam("mainBody") MultipartFile mainBody,
+            @RequestParam("assignmentBook") MultipartFile assignmentBook,
+            @RequestParam("proposal") MultipartFile proposal,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("jieTiDaBian") MultipartFile jieTiDaBian,
+            @RequestParam("finalReport") MultipartFile finalReport,
+            @RequestParam("production") MultipartFile production,
+            @RequestParam("reply") MultipartFile reply,
+            Report report,Model model){
         StudentReport studentReport=new StudentReport();
         report.setStudentId(getUser().getId());
         reportService.insert(report);
-        if (proposal.isEmpty() && file.isEmpty() && finalReport.isEmpty() && reply.isEmpty()) {
+        if (mainBody.isEmpty() && assignmentBook.isEmpty()&& proposal.isEmpty()
+                && file.isEmpty() && jieTiDaBian.isEmpty() && finalReport.isEmpty()
+                && production.isEmpty() &&reply.isEmpty()) {
             log.error("文件为空");
             model.addAttribute("message","文件为空");
             return "error";
+        }
+        if (!mainBody.isEmpty() && mainBody != null) {
+            String fileName=mainBody.getOriginalFilename();
+            String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String Suffix = "pdf/docx/doc/pptx/ppt/txt/zip/tar/rar";
+            if (Suffix.indexOf(fileNameSuffix) < 0) {
+                log.error("文件上传格式有误");
+                model.addAttribute("message","文件上传格式有误");
+                return "error";
+            }
+            fileName =fileUtil.uploadFile(mainBody,fileName,path);
+            studentReport.setCode((UUID.randomUUID().toString().replace("-", "").toLowerCase()));
+            studentReport.setFileurl(static_url+fileName);
+            studentReport.setFilepath(path+fileName);
+            studentReport.setUrl("/report/download/"+studentReport.getCode());
+            studentReport.setReportId(report.getId());
+            studentReport.setStudentId(report.getStudentId());
+            studentReport.setReportType("正文");
+            studentReportService.insert(studentReport);
+        }
+        if (!assignmentBook.isEmpty() && assignmentBook != null) {
+            String fileName=assignmentBook.getOriginalFilename();
+            String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String Suffix = "pdf/docx/doc/pptx/ppt/txt/zip/tar/rar";
+            if (Suffix.indexOf(fileNameSuffix) < 0) {
+                log.error("文件上传格式有误");
+                model.addAttribute("message","文件上传格式有误");
+                return "error";
+            }
+            fileName =fileUtil.uploadFile(assignmentBook,fileName,path);
+            studentReport.setCode((UUID.randomUUID().toString().replace("-", "").toLowerCase()));
+            studentReport.setFileurl(static_url+fileName);
+            studentReport.setFilepath(path+fileName);
+            studentReport.setUrl("/report/download/"+studentReport.getCode());
+            studentReport.setReportId(report.getId());
+            studentReport.setStudentId(report.getStudentId());
+            studentReport.setReportType("任务书");
+            studentReportService.insert(studentReport);
         }
         if (!proposal.isEmpty() && proposal != null) {
            String fileName=proposal.getOriginalFilename();
@@ -111,6 +156,26 @@ public class ReportController extends BaseController {
             studentReportService.insert(studentReport);
             log.info("文件上传成功");
         }
+        if (!jieTiDaBian.isEmpty() && jieTiDaBian != null) {
+            String fileName = jieTiDaBian.getOriginalFilename();
+            String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String Suffix = "pdf/docx/doc/pptx/ppt/txt/zip/tar/rar";
+            if (Suffix.indexOf(fileNameSuffix) < 0) {
+                log.error("文件上传格式有误");
+                model.addAttribute("message","文件上传格式有误");
+                return "error";
+            }
+            fileName=fileUtil.uploadFile(jieTiDaBian,fileName,path);
+            studentReport.setCode((UUID.randomUUID().toString().replace("-", "").toLowerCase()));
+            studentReport.setFileurl(static_url+fileName);
+            studentReport.setFilepath(path+fileName);
+            studentReport.setUrl("/report/download/"+studentReport.getCode());
+            studentReport.setReportId(report.getId());
+            studentReport.setStudentId(report.getStudentId());
+            studentReport.setReportType("结题答辩");
+            studentReportService.insert(studentReport);
+            log.info("文件上传成功");
+        }
         if (!finalReport.isEmpty() && finalReport != null) {
             String fileName = finalReport.getOriginalFilename();
             String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -128,6 +193,26 @@ public class ReportController extends BaseController {
             studentReport.setReportId(report.getId());
             studentReport.setStudentId(report.getStudentId());
             studentReport.setReportType("结题报告");
+            studentReportService.insert(studentReport);
+            log.info("文件上传成功");
+        }
+        if (!production.isEmpty() && production != null) {
+            String fileName = production.getOriginalFilename();
+            String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            String Suffix = "pdf/docx/doc/pptx/ppt/txt/zip/tar/rar";
+            if (Suffix.indexOf(fileNameSuffix) < 0) {
+                log.error("文件上传格式有误");
+                model.addAttribute("message","文件上传格式有误");
+                return "error";
+            }
+            fileName = fileUtil.uploadFile(production,fileName,path);
+            studentReport.setCode((UUID.randomUUID().toString().replace("-", "").toLowerCase()));
+            studentReport.setFileurl(static_url+fileName);
+            studentReport.setFilepath(path+fileName);
+            studentReport.setUrl("/report/download/"+studentReport.getCode());
+            studentReport.setReportId(report.getId());
+            studentReport.setStudentId(report.getStudentId());
+            studentReport.setReportType("结题答辩");
             studentReportService.insert(studentReport);
             log.info("文件上传成功");
         }
@@ -172,11 +257,6 @@ public class ReportController extends BaseController {
         StudentReport studentReport=new StudentReport();
         report.setStudentId(getUser().getId());
         reportService.update(report);
-//        if (proposal.isEmpty() && file.isEmpty() && finalReport.isEmpty() && reply.isEmpty()) {
-//            log.error("文件为空");
-//            model.addAttribute("message","文件为空");
-//            return "error";
-//        }
         if (!proposal.isEmpty() && proposal != null) {
             String fileName=proposal.getOriginalFilename();
             String fileNameSuffix = fileName.substring(fileName.lastIndexOf(".") + 1);

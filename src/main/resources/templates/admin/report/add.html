@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
         <div class="container-fluid" th:fragment="content">
-					<h2 class="w3_inner_tittle">报告<small style="color:#aaa">上传</small></h2>
+			<h2 class="w3_inner_tittle">报告<small style="color:#aaa">上传</small></h2>
 			<form action="/report/add" method="post" enctype="multipart/form-data">
 				<div class="form-group">
 					<label>姓名</label>
@@ -12,13 +12,21 @@
 					<input type="text" id="content" name="content" class="form-control" placeholder="留言">
 				</div>
 				<div class="form-group">
+					<label>正文报告上传</label>
+					<input type="file" name="mainBody" class="form-control" >
+					<label>任务书上传</label>
+					<input type="file" name="assignmentBook" class="form-control" >
 					<label>开题报告上传</label>
 					<input type="file" name="proposal" class="form-control" >
-					<label>中检报告上传</label>
+					<label>中检检查报告上传</label>
 					<input type="file" name="file" class="form-control">
-					<label>结题报告上传</label>
+					<label>结题答辩资格审查表上传</label>
+					<input type="file" name="jieTiDaBian" class="form-control">
+					<label>结题答辩报告上传</label>
 					<input type="file" name="finalReport" class="form-control">
-					<label>答辩报告上传</label>
+					<label>作品验收单上传</label>
+					<input type="file" name="production" class="form-control" >
+					<label>评审表上传</label>
 					<input type="file" name="reply" class="form-control">
 				</div>
 				<button type="submit" class="btn btn-xs btn-primary">保存</button>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
         <div class="container-fluid" th:fragment="content">
-					<h2 class="w3_inner_tittle">报告<small style="color:#aaa">审批</small></h2>
+			<h2 class="w3_inner_tittle">报告<small style="color:#aaa">审批</small></h2>
 			<form action="/report/check" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="id" th:value="${report.getId()}">
 				<div class="form-group">

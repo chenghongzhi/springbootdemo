@@ -1,43 +1,44 @@
 ﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
 	<div class="container-fluid" th:fragment="content">
-				<h2 class="w3_inner_tittle">报告<small style="color:#aaa">列表</small>
-					<a shiro:hasPermission="'report:add'" href="/report/add" class="btn btn-xs btn-primary pull-right">上传报告</a>
-				</h2>
-				<table class="table">
-					<tr>
-						<th>状态</th>
-						<th>老师名字</th>
-						<th>学生名字</th>
-						<th>内容</th>
-						<th>老师评论</th>
-						<th>上传时间</th>
-						<th>操作</th>
-					</tr>
-					<tr th:each="page : ${pages.getRecords()}">
-						<td th:text="${page.getStatus()}"></td>
-						<td th:text="${page.getTeacherName()}"></td>
-						<td th:text="${page.getStudentName()}"></td>
-						<td th:text="${page.getContent()}"></td>
-						<td th:text="${page.getRemark()}"></td>
-						<td th:text="${#dates.format(page.getInTime(),'yyyy-MM-dd HH:mm:ss')}"></td>
-						<td>
-							<a shiro:hasPermission="'report:check'" th:href="'/report/check?id=' + ${page.getId()}" class="btn btn-xs btn-primary">审核</a>
-							<a shiro:hasPermission="'report:edit'" th:href="'/report/edit?id=' + ${page.getId()}" class="btn btn-xs btn-warning">编辑</a>
-							<a shiro:hasPermission="'report:delete'" th:href="'/report/delete?id=' + ${page.getId()}" class="btn btn-xs btn-danger">删除</a>
-						</td>
-					</tr>
-				</table>
-				<ul class="pagination pagination-lg" >
-					<li th:class="${pages.getCurrent()==1}?'disabled' : ''"><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-1}">上一页</a></li>
-					<li th:if="${pages.getCurrent()-3 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-3}" th:text="${pages.getCurrent() -3}" >1</a></li>
-					<li th:if="${pages.getCurrent()-2 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-2}" th:text="${pages.getCurrent() -2}" >1</a></li>
-					<li th:if="${pages.getCurrent()-1 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-1}" th:text="${pages.getCurrent() -1}" >1</a></li>
-					<li class="active"><a href="#" th:text="${pages.getCurrent()}" >1</a></li>
-					<li th:if="${pages.getCurrent()+1 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+1}" th:text="${pages.getCurrent() +1}" >1</a></li>
-					<li th:if="${pages.getCurrent()+2 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+2}" th:text="${pages.getCurrent() +2}" >1</a></li>
-					<li th:if="${pages.getCurrent()+3 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+3}" th:text="${pages.getCurrent() +3}" >1</a></li>
-					<li th:class="${pages.getCurrent()==pages.getPages()}?'disabled' : ''" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+1}">下一页</a></li>
-				</ul><br>
+		<h2 class="w3_inner_tittle">报告<small style="color:#aaa">列表</small>
+			<a shiro:hasPermission="'report:add'" href="/report/add" class="btn btn-xs btn-primary pull-right">上传报告</a>
+		</h2>
+		<table class="table">
+			<tr>
+				<th>状态</th>
+				<th>老师姓名</th>
+				<th>学生姓名</th>
+				<th>老师评论</th>
+				<th>内容</th>
+				<th>上传时间</th>
+				<th>操作</th>
+			</tr>
+			<tr th:each="page : ${pages.getRecords()}">
+				<td th:text="${page.getStatus()}"></td>
+				<td th:text="${page.getTeacherName()}"></td>
+				<td th:text="${page.getStudentName()}"></td>
+				<td th:text="${page.getRemark()}"></td>
+
+				<td th:text="${page.getContent()}"></td>
+				<td th:text="${#dates.format(page.getInTime(),'yyyy-MM-dd HH:mm:ss')}"></td>
+				<td>
+					<a shiro:hasPermission="'report:check'" th:href="'/report/check?id=' + ${page.getId()}" class="btn btn-xs btn-primary">审核</a>
+					<a shiro:hasPermission="'report:edit'" th:href="'/report/edit?id=' + ${page.getId()}" class="btn btn-xs btn-warning">编辑</a>
+					<a shiro:hasPermission="'report:delete'" th:href="'/report/delete?id=' + ${page.getId()}" class="btn btn-xs btn-danger">删除</a>
+				</td>
+			</tr>
+		</table>
+		<ul class="pagination pagination-lg" >
+			<li th:class="${pages.getCurrent()==1}?'disabled' : ''"><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-1}">上一页</a></li>
+			<li th:if="${pages.getCurrent()-3 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-3}" th:text="${pages.getCurrent() -3}" >1</a></li>
+			<li th:if="${pages.getCurrent()-2 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-2}" th:text="${pages.getCurrent() -2}" >1</a></li>
+			<li th:if="${pages.getCurrent()-1 >=1}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()-1}" th:text="${pages.getCurrent() -1}" >1</a></li>
+			<li class="active"><a href="#" th:text="${pages.getCurrent()}" >1</a></li>
+			<li th:if="${pages.getCurrent()+1 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+1}" th:text="${pages.getCurrent() +1}" >1</a></li>
+			<li th:if="${pages.getCurrent()+2 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+2}" th:text="${pages.getCurrent() +2}" >1</a></li>
+			<li th:if="${pages.getCurrent()+3 <=pages.getPages()}" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+3}" th:text="${pages.getCurrent() +3}" >1</a></li>
+			<li th:class="${pages.getCurrent()==pages.getPages()}?'disabled' : ''" ><a th:href="'/report/list?pageNo=' + ${pages.getCurrent()+1}">下一页</a></li>
+		</ul><br>
 			</div>
 </html>

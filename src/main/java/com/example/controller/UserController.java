@@ -64,11 +64,20 @@ public class UserController extends BaseController{
     @GetMapping("/index")
     public String index(HttpSession session){
         session.setAttribute("name",getUser().getUsername());
+        session.setAttribute("id",getUser().getId());
         return "index";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password")String password, Model model, HttpSession session){
+    public String login(@RequestParam("username") String username, @RequestParam("password")String password, String code, HttpSession session,Model model,String captcha){
+//        String captcha = (String) session.getAttribute("_captcha");
+        System.out.println(captcha);
+        log.error("captcha"+captcha);
+        log.error("code"+code);
+//        if (!captcha.equals(code) || code==null) {
+//            model.addAttribute("message","验证码错误");
+//            return "error";
+//        }
         UsernamePasswordToken token=new UsernamePasswordToken(username,password);
         Subject subject= SecurityUtils.getSubject();
         try {
@@ -76,6 +85,7 @@ public class UserController extends BaseController{
                 //进行验证，这里可以捕获异常，然后返回对应信息
                 subject.login(token);
                 session.setAttribute("name",username);
+                session.setAttribute("id",getUser().getId());
             }
         } catch (AuthenticationException e) {
             log.error(e.getMessage());
@@ -85,7 +95,10 @@ public class UserController extends BaseController{
     }
 
     @GetMapping("/logout")
-    public String logout(){
+    public String logout(HttpSession session){
+        if (session!=null) {
+            session.removeAttribute("name");
+        }
         Subject subject=SecurityUtils.getSubject();
         if (subject!=null) {
             subject.logout();
