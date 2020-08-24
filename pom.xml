@@ -151,21 +151,6 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <!-- 如果是true 在打出来的包/路径上面会增加这个Assembly的id显示-->
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptors>
-                        <!-- assembly描述文件位置 -->
-                        <descriptor>src/main/resources/assembly.xml</descriptor>
-                    </descriptors>
-                    <!-- 打包完成后文件输出位置 这里为target目录-->
-                    <outputDirectory>${project.build.directory}</outputDirectory>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.0</version>
