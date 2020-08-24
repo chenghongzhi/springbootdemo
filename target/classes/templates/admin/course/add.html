@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
+        <div class="container-fluid" th:fragment="content">
+			<h2 class="w3_inner_tittle" style="color:#666"><small style="color:#aaa">资料上传</small></h2>
+			<form>
+				<div class="form-group">
+					<input type="file" id="file" name="file" class="form-control" >
+				</div>
+				<button type="submit" id="btn" class="btn btn-xs btn-primary">保存</button>
+			</form>
+			<script>
+				$("#btn").click(function () {
+					var formData = new FormData();
+					formData.append("files", $("#file")[0].files[0]);
+					formData.append("reportId",0);
+					$.ajax({
+						type:'POST',
+						url:"/api/v1/document/upload",
+						data:formData,
+						contentType:false,
+						processData:false,//这个很有必要，不然不行
+						dataType:"json",
+						mimeType:"multipart/form-data",
+						success:function(data){
+							if (data.meta.success) {
+								toast("文件上传成功", "success");
+							} else {
+								toast(data.meta.message);
+							}
+						}
+					})
+				});
+			</script>
+        </div>
+</html>

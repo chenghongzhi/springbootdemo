@@ -1,22 +1,14 @@
 package com.example.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.mapper.RoleMapper;
 import com.example.mapper.UserMapper;
+import com.example.model.MyPage;
 import com.example.model.User;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +17,7 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserMapper userMapper;
-//    @Cacheable(value = "tests",keyGenerator = "keyGenerator",condition = "#id==15")
+
     public User selectById(Integer id){
         return userMapper.selectById(id);
     }
@@ -35,39 +27,76 @@ public class UserService {
         String password = new SimpleHash("MD5", user.getPassword(), credentialsSalt, 1024).toHex();
         user.setPassword(password);
         user.setInTime(new Date());
+        user.setState(0);
         userMapper.insert(user);
-    }
-
-//    @CachePut(value = "test",key = "#user.id")
-    public User inserts(User user){
-        ByteSource credentialsSalt = ByteSource.Util.bytes(user.getUsername());
-        String password = new SimpleHash("MD5", user.getPassword(), credentialsSalt, 1024).toHex();
-        user.setPassword(password);
-        user.setInTime(new Date());
-        userMapper.insert(user);
-        return userMapper.selectById(user.getId());
     }
 
     public void update(User user){
+        ByteSource credentialsSalt = ByteSource.Util.bytes(user.getUsername());
+        String password = new SimpleHash("MD5", user.getPassword(), credentialsSalt, 1024).toHex();
+        user.setPassword(password);
         userMapper.updateById(user);
     }
 
-    public User updates(User user){
+    public void updateUser(User user){
         userMapper.updateById(user);
-        return userMapper.selectById(user.getId());
     }
 
     public User selectByName(String name){
         return userMapper.selectByName(name);
     }
 
+    public MyPage<User> selectAllByPage(Integer pageNo){
+        MyPage<User> myPage = new MyPage<>(pageNo, 10);
+        return userMapper.selectAll(myPage);
+    }
 
-    public IPage<User> selectAllByPage(Integer pageNo){
-        Page<User> page=new Page<>(pageNo,8);
-        return userMapper.selectPage(page,null);
+    public MyPage<User> selectAllStudentByPage(Integer pageNo){
+        MyPage<User> myPage = new MyPage<>(pageNo, 10);
+        myPage.setSelectInt(2);
+        return userMapper.selectAllByRoleId(myPage);
+    }
+
+    public MyPage<User> selectAllTeacherByPage(Integer pageNo){
+        MyPage<User> myPage = new MyPage<>(pageNo, 10);
+        myPage.setSelectInt(1);
+        return userMapper.selectAllByRoleId(myPage);
+    }
+
+    public MyPage<User> selectAllGroupLeaderByPage(Integer pageNo){
+        MyPage<User> myPage = new MyPage<>(pageNo, 10);
+        myPage.setSelectInt(3);
+        return userMapper.selectAllByRoleId(myPage);
     }
 
     public void delete(Integer id){
         userMapper.deleteById(id);
     }
+
+    public List<User> selectStudent(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(User::getRoleId,2).eq(User::getState,0);
+        return userMapper.selectList(wrapper);
+    }
+
+    public List<User> selectTeacher(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(User::getRoleId,1).eq(User::getState,0);
+        return userMapper.selectList(wrapper);
+    }
+
+
+    public boolean accountAvailable(String name){
+        User user = this.selectByName(name);
+        if (user ==null) {
+            return true;
+        }
+        return false;
+    }
+
+    public void updateState(Integer state,Integer id){
+        userMapper.updateState(state,id);
+    }
+
+
 }

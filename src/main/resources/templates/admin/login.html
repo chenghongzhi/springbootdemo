@@ -24,32 +24,146 @@
             background: none;
         }
     </style>
+    <script>
+        function toast(txt, icon,callback) {
+            console.log($.toast({
+                text: txt, // Text that is to be shown in the toast
+                heading: '系统提醒', // Optional heading to be shown on the toast
+                icon: icon || 'error', // Type of toast icon warning, info, success, error
+                showHideTransition: 'slide', // fade, slide or plain
+                allowToastClose: true, // Boolean value true or false
+                hideAfter: 2000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+                stack: false, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+                position: 'top-right', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+            }));
+        }
+    </script>
 </head>
 
 <body class="hold-transition login-page">
 <div class="login-box">
-    <!-- 	<div class="login-logo">
-            <a href="javascript:;"><b>ADMIN</b></a>
-        </div> -->
     <div class="login-box-body">
         <p class="login-box-msg">管理平台登录</p>
-
-        <form id="form" action="/user/login" method="post">
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" id="username" name="username" placeholder="用户名">
-                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+        <form action="" onsubmit="return;" id="form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="用户名"/>
             </div>
-            <div class="form-group has-feedback">
-                <input type="password" class="form-control" id="password" name="password" placeholder="密码">
-                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="密码"/>
+            </div>
+            <div class="form-group">
+                <label for="captcha">验证码</label>
+                <input type="hidden" id="captchaToken">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="captcha" name="captcha" placeholder="验证码"/>
+                    <span class="input-group-btn">
+                            <img style="border: 1px solid #ccc;" src="" id="changeCaptcha"/>
+                        </span>
+                </div>
             </div>
             <div class="row">
                 <div class="col-xs-4">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat"><i class="fa fa-adminUser"></i> 登录</button>
+                    <button type="submit" id="login_btn" onclick="return false" class="btn btn-primary btn-block btn-flat"><i class="fa fa-adminUser"></i> 登录</button>
                 </div>
             </div>
         </form>
     </div>
+    <script>
+        $(function () {
+            $.ajax({
+                url: '/api/v1/captcha',
+                type: 'get',
+                cache: false,
+                async: false,
+                contentType: 'application/json',
+                success: function(data) {
+                    document.getElementById('changeCaptcha').setAttribute("src","data:image/gif;base64,"+data.data.img)
+                    document.getElementById('captchaToken').setAttribute("title",data.data.codeToken)
+                }
+            })
+            $("#changeCaptcha").click(function () {
+                $.ajax({
+                    url: '/api/v1/captcha',
+                    type: 'get',
+                    cache: false,
+                    async: false,
+                    contentType: 'application/json',
+                    success: function(data) {
+                        document.getElementById('changeCaptcha').setAttribute("src","data:image/gif;base64,"+data.data.img)
+                        document.getElementById('captchaToken').setAttribute("title",data.data.codeToken)
+                    }
+                })
+            })
+
+            function changeCaptcha() {
+                $.ajax({
+                    url: '/api/v1/captcha',
+                    type: 'get',
+                    cache: false,
+                    contentType: 'application/json',
+                    success: function (data) {
+                        document.getElementById('changeCaptcha').setAttribute("src", "data:image/gif;base64," + data.data.img)
+                        document.getElementById('captchaToken').setAttribute("title", data.data.codeToken)
+                    }
+                })
+            }
+
+            $("#login_btn").click(function () {
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var captcha = $("#captcha").val();
+                if (!username) {
+                    toast("请输入用户名");
+                    changeCaptcha()
+                    return;
+                }
+                if (!password) {
+                    toast("请输入密码");
+                    changeCaptcha()
+                    return;
+                }
+                if (!captcha) {
+                    toast("请输入验证码");
+                    changeCaptcha()
+                    return;
+                }
+                $.ajax({
+                    url: '/api/v1/user/login',
+                    type: 'post',
+                    cache: false,
+                    async: false,
+                    headers: {
+                        "codeToken": $('#captchaToken').attr('title')
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        username: username,
+                        password: password,
+                        captcha: captcha
+                    }),
+                    success: function(data) {
+                        if (data.meta.success == true) {
+                            var token = data.data.token;
+                            var username = data.data.userInfo;
+                            var id = data.data.userId;
+                            localStorage.setItem("Hm_lpvt_ec6be1ebbc53f7a86875f54c87c47b30",token);
+                            localStorage.setItem("Hm_lpvt_ec6be1ebbc53f7a86875f54c87c47b31",username);
+                            localStorage.setItem("Hm_lpvt_ec6be1ebbc53f7a86875f54c87c47b32",id);
+                            toast("登录成功", "success");
+                            window.location.href = "/index";
+                        } else {
+                            toast(data.meta.message);
+                            changeCaptcha()
+                        }
+                        return false;
+                    }
+
+                })
+            })
+        })
+    </script>
 </div>
 </body>
 </html>

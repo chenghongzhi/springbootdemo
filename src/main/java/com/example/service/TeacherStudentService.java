@@ -16,8 +16,14 @@ public class TeacherStudentService {
     @Autowired
     private TeacherStudentMapper teacherStudentMapper;
 
-    public void insert(TeacherStudent studentReport){
-        teacherStudentMapper.insert(studentReport);
+    public void insert(TeacherStudent teacherStudent){
+        teacherStudentMapper.insert(teacherStudent);
+    }
+
+    public TeacherStudent selectByStudentId(Integer studentId){
+        QueryWrapper<TeacherStudent> wrapper=new QueryWrapper<>();
+        wrapper.lambda().eq(TeacherStudent::getStudentId,studentId);
+        return teacherStudentMapper.selectOne(wrapper);
     }
 
     public List<TeacherStudent> selectByTeacherId(Integer teacherId){
@@ -29,7 +35,7 @@ public class TeacherStudentService {
     public void deleteByStudentId(Integer studentId){
         QueryWrapper<TeacherStudent> wrapper = new QueryWrapper<>();
         wrapper.lambda()
-                .eq( TeacherStudent::getStudentId, studentId);
+                .eq(TeacherStudent::getStudentId, studentId);
         teacherStudentMapper.delete(wrapper);
     }
 

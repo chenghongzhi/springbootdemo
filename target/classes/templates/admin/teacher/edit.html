@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
+        <div class="container-fluid" th:fragment="content">
+			<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+				<legend>选择学生</legend>
+			</fieldset>
+			<form method="post">
+				<input type="hidden" id="teacherId" name="teacherId" th:value="${id}">
+				<div class="form-group" shiro:hasRole="管理员">
+					<label>学生姓名</label>
+					<p th:each="student : ${list}">
+						<input type="checkbox" id="studentId" name="studentId" th:value="${student.getId()}"/>
+						<label th:text="${student.realname}"></label><br>
+					</p>
+				</div>
+				<input type="button" style="width: 50px" id="addBtn" th:onclick="'javascript:addUser();'" class="btn btn-primary btn-block " value="保存" />
+			</form>
+			<script>
+
+				function addUser() {
+					var teacherId = $("#teacherId").val();
+					var countsCheckBox = $("input[type='checkbox']:checked");
+					var booksid = [];
+					for(var i=0;i<countsCheckBox.length;i++){
+						mysendbook_id = {};
+						mysendbook_id = countsCheckBox[i].value;
+						booksid[i] = mysendbook_id;
+					}
+					$.ajax({
+						url: '/api/v1/teacherStudent/add',
+						type: 'post',
+						cache: false,
+						async: false,
+						contentType: 'application/json',
+						data: JSON.stringify({
+							teacherId: teacherId,
+							ids:booksid
+						}),
+						success: function(data) {
+							// console.log(data)
+							if (data.meta.success == true) {
+								toast("新增成功", "success")
+								window.location.href = "/teacher/list";
+								return true;
+							} else {
+								toast(data.meta.message);
+								return false;
+							}
+						}
+
+					})
+				}
+			</script>
+        </div>
+
+</html>

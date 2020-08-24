@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
+	<div class="container-fluid" th:fragment="content">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			<legend>用户列表</legend>
+		</fieldset>
+		<form action="/api/v1/user/userExcelImport" method="post" id="form1" enctype="multipart/form-data">
+			<input type="file" name="file" id="fl" style="display: none;">
+		</form>
+		<a style="width: 50px;float: left;margin-right: 10px" class="btn btn-primary btn-block " href="/user/add">添加</a>
+		<input id="btn" type="button" style="width: 100px;float: left;margin-top: 0px;margin-right: 10px" class="btn btn-primary btn-block " value="批量导入" />
+		<!--                    其他用户-->
+		<a style="width: 120px;float: left;margin-top: 0px" class="btn btn-primary btn-block " href="/api/v1/user/download/cf2e2b4f-2d7b-4d5f-8417-b5b0a1f5749a">下载excel模板</a>
+		<table class="table">
+			<thead>
+			<tr>
+				<th>编号</th>
+				<th>用户名</th>
+				<th>姓名</th>
+				<th>角色</th>
+				<th>注册时间</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr th:each="page : ${pages.getRecords()}">
+				<td th:text="${page.getId()}"></td>
+				<td th:text="${page.getUsername()}"></td>
+				<td th:text="${page.realname}"></td>
+				<td th:text="${page.getRoleName()}"></td>
+				<td th:text="${#dates.format(page.getInTime(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+				<td>
+					<a shiro:hasPermission="'user:edit'" th:href="'/user/edit?id=' + ${page.getId()}" class="btn btn-xs btn-warning">编辑</a>
+					<input type="button" style="width: 50px" th:onclick="'javascript:deleteUser(\''+${page.id}+'\');'" class="btn btn-xs btn-danger" value="删除" />
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<ul class="pagination" >
+			<li th:class="${pages.getCurrent()==1}?'disabled' : ''"><a th:href="${pages.getCurrent()==1}?'#' : '/user/list?pageNo=' + ${pages.getCurrent()-1}">上一页</a></li>
+			<li th:if="${pages.getCurrent()-3 >=1}" ><a th:href="'/user/list?pageNo=' + ${pages.getCurrent()-3}" th:text="${pages.getCurrent() -3}" >1</a></li>
+			<li th:if="${pages.getCurrent()-2 >=1}" ><a th:href="'/user/list?pageNo=' + ${pages.getCurrent()-2}" th:text="${pages.getCurrent() -2}" >1</a></li>
+			<li th:if="${pages.getCurrent()-1 >=1}" ><a th:href="'/user/list?pageNo=' + ${pages.getCurrent()-1}" th:text="${pages.getCurrent() -1}" >1</a></li>
+			<li class="active"><a href="#" th:text="${pages.getCurrent()}" >1</a></li>
+			<li th:if="${pages.getCurrent()+1 <=pages.getPages()}" ><a th:href="'/user/list?pageNo=' +  ${pages.getCurrent()+1}" th:text="${pages.getCurrent() +1}" >1</a></li>
+			<li th:if="${pages.getCurrent()+2 <=pages.getPages()}" ><a th:href="'/user/list?pageNo=' + ${pages.getCurrent()+2}" th:text="${pages.getCurrent() +2}" >1</a></li>
+			<li th:if="${pages.getCurrent()+3 <=pages.getPages()}" ><a th:href="'/user/list?pageNo=' +  ${pages.getCurrent()+3}" th:text="${pages.getCurrent() +3}" >1</a></li>
+			<li th:class="${pages.getCurrent()>=pages.getPages()}?'disabled' : ''" ><a th:href="${pages.getCurrent()>=pages.getPages()}?'#' : '/user/list?pageNo=' +  ${pages.getCurrent()+1}">下一页</a></li>
+		</ul><br>
+		<script>
+			$(function () {
+				$('#btn').on('click', function() {
+					$('#fl').val("").click();
+				})
+
+				$('#fl').change(function() {
+					let form = $('#form1')[0];
+					let formdata = new FormData(form);
+					$.ajax({
+						url: form.action,
+						type: form.method,
+						data: formdata,
+						processData: false,
+						contentType: false,
+						success: function(data) {
+							if (data.meta.success === true) {
+								toast("导入成功","success")
+								setTimeout(function () {
+									window.location.reload();
+								}, 700);
+								return true;
+							} else {
+								toast(data.meta.message);
+								return false;
+							}
+						}
+					})
+				})
+			})
+
+			function deleteUser(id) {
+				$.ajax({
+					url: '/api/v1/user/users/'+id,
+					type: 'get',
+					cache: false,
+					async: false,
+					contentType: 'application/json',
+					success: function(data) {
+						if (data.meta.success === true) {
+							toast("删除成功","success")
+							setTimeout(function () {
+								window.location.reload();
+							}, 700);
+							return true;
+						} else {
+							toast(data.meta.message);
+							return false;
+						}
+					}
+				})
+			}
+		</script>
+	</div>
+</html>

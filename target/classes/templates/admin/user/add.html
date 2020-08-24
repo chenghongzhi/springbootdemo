@@ -1,24 +1,79 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
 	<div class="container-fluid" th:fragment="content">
-			<h2 class="w3_inner_tittle">用户<small style="color:#aaa">新增</small></h2>
-		<form action="/user/add" method="post">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			<legend>用户新增</legend>
+		</fieldset>
+		<form method="post">
 			<div class="form-group">
-				<label>用户名</label>
-				<input type="text" id="username" name="username" class="form-control" placeholder="用户名">
+				<label>账号</label>
+				<input type="text" id="username" name="username" class="form-control" placeholder="必填项，请输入英文或数字，字数限制在12个字以内">
 			</div>
 			<div class="form-group">
 				<label>密码</label>
-				<input type="password" id="password" name="password" class="form-control" placeholder="密码">
+				<input type="password" id="password" name="password" class="form-control" placeholder="必填项，需要包含字母和数字且长度在6到14位之间">
 			</div>
 			<div class="form-group">
-				<label>角色</label>
-				<p th:each="role : ${roles}">
-					<input type="radio" name="roleId" th:value="${role.getId()}">
-					<label th:text="${role.getName()}"></label>
-				</p>
+				<label>姓名</label>
+				<input type="text"  id="realname" name="realname" class="form-control" placeholder="请输入姓名">
 			</div>
-			<button type="submit" class="btn btn-xs btn-primary">保存</button>
+			<div class="form-group">
+				<label>角色:</label>
+				<select id="roleId" name="roleId">
+					<option th:each="role : ${roles}" th:text="${role.getName()}" th:value="${role.getId()}"></option>
+				</select>
+			</div>
+			<div class="form-group">
+				<input type="button" style="width: 50px" id="addBtn" th:onclick="'javascript:addUser();'" class="btn btn-primary btn-block " value="添加" />
+			</div>
 		</form>
+		<script>
+			$(function() {
+				$("#roleId").attr("checked", true);
+			})
+
+			function addUser() {
+				var username = $("#username").val();
+				var password = $("#password").val();
+				var realname= $("#realname").val();
+				var roleId= $("#roleId option:selected").val();
+				if (!username) {
+					toast("请输入用户名");
+					return;
+				}
+				if (!password) {
+					toast("请输入密码");
+					return;
+				}
+				if (!realname) {
+					toast("请输入姓名");
+					return;
+				}
+				$.ajax({
+					url: '/api/v1/user/users',
+					type: 'post',
+					cache: false,
+					async: false,
+					contentType: 'application/json',
+					data: JSON.stringify({
+						username: username,
+						password: password,
+						realname:realname,
+						roleId: roleId
+					}),
+					success: function(data) {
+						if (data.meta.success == true) {
+							toast("新增成功", "success")
+							window.location.href = "/user/list";
+							return true;
+						} else {
+							toast(data.meta.message);
+							return false;
+						}
+					}
+
+				})
+			}
+		</script>
 	</div>
 </html>

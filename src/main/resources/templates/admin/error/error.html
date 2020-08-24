@@ -1,86 +1,36 @@
+
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="">
-		<meta name="author" content="">
-
-		<title>后台管理</title>
-
-		<!-- Custom fonts for this template-->
-		<link href="/static/vendor/css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-		<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-		 rel="stylesheet">
-
-		<!-- Custom styles for this template-->
-		<link href="/static/vendor/css/sb-admin-2.min.css" rel="stylesheet">
-		<style>
-			td {
-			line-height: 2.5em;
-		}
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>错误页面！</title>
+	<style type="text/css">
+		.head404{ width:580px; height:234px; margin:50px auto 0 auto; background:url(/static/images/head404.png) no-repeat; }
+		.txtbg404{ width:499px; height:169px; margin:10px auto 0 auto; background:url(/static/images/txtbg404.png) no-repeat;}
+		.txtbg404 .txtbox{ width:390px; position:relative; top:30px; left:60px;color:#eee; font-size:13px;}
+		.txtbg404 .txtbox p {margin:5px 0; line-height:18px;}
+		.txtbg404 .txtbox .paddingbox { padding-top:15px;}
+		.txtbg404 .txtbox p a { color:#eee; text-decoration:none;}
+		.txtbg404 .txtbox p a:hover { color:#FC9D1D; text-decoration:underline;}
 	</style>
+</head>
+<body bgcolor="#494949">
 
-	</head>
+<div class="head404"></div>
 
-	<body id="page-top">
+<div class="txtbg404">
 
-		<!-- Page Wrapper -->
-		<div id="wrapper">
-			<div id="content-wrapper" class="d-flex flex-column">
+	<div class="txtbox">
+		<p th:text="${error}">输入的参数有误，请重试!</p>
+		<p class="paddingbox">请点击以下链接继续浏览网页</p>
 
-				<!-- Main Content -->
-				<div id="content">
+		<p>》<a style="cursor:pointer" οnclick="history.back()">返回上一页面</a></p>
 
-					<div class="container-fluid">
-						<!-- 404 Error Text -->
-						<div class="text-center">
-						  <div class="error mx-auto" th:text="${errorCode}"></div>
-						  <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
-						  <a href="/user/index">&larr; Back to Index</a>
-						</div>
-					</div>
+		<p>》<a href="/home/home">返回网站首页</a></p>
 
-			<!-- Logout Modal-->
-			<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-							<button class="close" type="button" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">×</span>
-							</button>
-						</div>
-						<div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-						<div class="modal-footer">
-							<button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-							<a class="btn btn-primary" href="../login.html">Logout</a>
-						</div>
-					</div>
-				</div>
-			</div>
+	</div>
 
-			<!-- Bootstrap core JavaScript-->
-			<script src="/static/vendor/jquery/jquery.min.js"></script>
-			<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</div>
 
-			<!-- Core plugin JavaScript-->
-			<script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-			<!-- Custom scripts for all pages-->
-			<script src="/static/vendor/js/sb-admin-2.min.js"></script>
-
-			<!-- Page level plugins -->
-			<script src="/static/vendor/chart.js/Chart.min.js"></script>
-
-			<!-- Page level custom scripts -->
-			<script src="/static/vendor/js/demo/chart-area-demo.js"></script>
-			<script src="/static/vendor/js/demo/chart-pie-demo.js"></script>
-			<script src="/static/vendor/js/demo/chart-bar-demo.js"></script>
-		</div>
-		</div>
-		</div>
-	</body>
-
+</body>
 </html>

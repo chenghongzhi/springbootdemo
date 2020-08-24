@@ -57,4 +57,7 @@ public class RoleService {
         }
     }
 
+    public Integer selectByName(String name){
+        return roleMapper.selectByRoleName(name);
+    }
 }

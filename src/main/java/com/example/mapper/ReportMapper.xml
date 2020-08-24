@@ -1,7 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.mapper.ReportMapper">
-    <select id="selectByCode" resultType="com.example.model.Report">
-        select * from report where code=#{code}
+
+    <select id="selectAll" resultType="com.example.model.Report">
+        SELECT * from report where student_id in(
+	        select student_id from teacher_student where teacher_id in (
+		    select teacher_id from group_teacher where group_leader_id=#{pg.selectInt})
+		) or student_id in(
+	        select student_id from teacher_student where teacher_id=#{pg.selectInt})
     </select>
+    <select id="selectByPage" resultType="com.example.model.Report">
+        select r.id,r.student_name,r.teacher_name,r.in_time,r.state,r.`type`,s.name as stateName,t.name as typeName
+        from report r,state s,type t
+        where r.state = s.id and r.type = t.id
+    </select>
+    <select id="selectById" resultType="com.example.model.Report">
+        select r.id,r.student_id,r.teacher_id,r.state,r.content,r.teacher_suggestion,r.teacher_name,r.student_name,r.`type`,s.name as stateName,t.name as typeName,rf.file_url as fileUrl,rf.file_name as fileName
+        from report r,state s,type t,report_files rf
+        where r.state = s.id and r.type = t.id and r.id=#{id} and r.files_id = rf.id
+    </select>
+    <select id="selectByTeacherId" resultType="com.example.model.Report">
+        select r.id,r.student_name,r.teacher_name,r.in_time,r.state,r.`type`,s.name as stateName,t.name as typeName
+        from report r,state s,type t
+        where r.state = s.id and r.type = t.id and r.student_id in(
+	        select student_id from teacher_student where teacher_id=#{pg.selectInt})
+    </select>
+    <select id="selectByStudentId" resultType="com.example.model.Report">
+        select r.id,r.student_name,r.teacher_name,r.in_time,r.state,r.`type`,s.name as stateName,t.name as typeName
+        from report r,state s,type t
+        where r.state = s.id and r.type = t.id and r.student_id=#{pg.selectInt}
+    </select>
+    <select id="selectByLeaderId" resultType="com.example.model.Report">
+        select r.id,r.student_name,r.teacher_name,r.in_time,r.state,r.`type`,s.name as stateName,t.name as typeName
+        from report r,state s,type t where r.state = s.id and r.type = t.id and student_id in(
+	        select student_id from teacher_student where teacher_id in (
+		    select teacher_id from leader_teacher where leader_id=#{pg.selectInt})
+		)
+    </select>
+
+
 </mapper>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
+	<div class="container-fluid" th:fragment="content">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			<legend>组长列表</legend>
+		</fieldset>
+			</h2>
+			<table class="table">
+				<thead>
+				<tr>
+					<th>编号</th>
+					<th>姓名</th>
+					<th>状态</th>
+					<th>注册时间</th>
+					<th>操作</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="page : ${pages.getRecords()}">
+					<td th:text="${page.getId()}"></td>
+					<td th:text="${page.realname}"></td>
+					<td th:text="${page.state}"></td>
+					<td th:text="${#dates.format(page.getInTime(), 'yyyy-MM-dd HH:mm:ss')}"></td>
+					<td>
+						<a shiro:hasPermission="'group:edit'" th:href="'/group/edit?id=' + ${page.getId()}" class="btn btn-xs btn-warning">选择指导老师</a>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<ul class="pagination" >
+			<li th:class="${pages.getCurrent()==1}?'disabled' : ''"><a th:href="${pages.getCurrent()==1}?'#' : '/group/list?pageNo=' + ${pages.getCurrent()-1}">上一页</a></li>
+			<li th:if="${pages.getCurrent()-3 >=1}" ><a th:href="'/group/list?pageNo=' + ${pages.getCurrent()-3}" th:text="${pages.getCurrent() -3}" >1</a></li>
+			<li th:if="${pages.getCurrent()-2 >=1}" ><a th:href="'/group/list?pageNo=' + ${pages.getCurrent()-2}" th:text="${pages.getCurrent() -2}" >1</a></li>
+			<li th:if="${pages.getCurrent()-1 >=1}" ><a th:href="'/group/list?pageNo=' + ${pages.getCurrent()-1}" th:text="${pages.getCurrent() -1}" >1</a></li>
+			<li class="active"><a href="#" th:text="${pages.getCurrent()}" >1</a></li>
+			<li th:if="${pages.getCurrent()+1 <=pages.getPages()}" ><a th:href="'/group/list?pageNo=' +  ${pages.getCurrent()+1}" th:text="${pages.getCurrent() +1}" >1</a></li>
+			<li th:if="${pages.getCurrent()+2 <=pages.getPages()}" ><a th:href="'/group/list?pageNo=' + ${pages.getCurrent()+2}" th:text="${pages.getCurrent() +2}" >1</a></li>
+			<li th:if="${pages.getCurrent()+3 <=pages.getPages()}" ><a th:href="'/group/list?pageNo=' +  ${pages.getCurrent()+3}" th:text="${pages.getCurrent() +3}" >1</a></li>
+			<li th:class="${pages.getCurrent()>=pages.getPages()}?'disabled' : ''" ><a th:href="${pages.getCurrent()>=pages.getPages()}?'#' : '/group/list?pageNo=' +  ${pages.getCurrent()+1}">下一页</a></li>
+		</ul><br>
+        </div>
+</html>

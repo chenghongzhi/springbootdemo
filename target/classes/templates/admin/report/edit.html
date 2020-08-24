@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" th:include="layout/layout">
 	<div class="container-fluid" th:fragment="content">
-		<h2 class="w3_inner_tittle">报告<small style="color:#aaa">上传</small></h2>
+		<h2 class="w3_inner_tittle" style="color:#666">报告<small style="color:#aaa">上传</small></h2>
 		<form action="/report/edit" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="id" th:value="${report.getId()}">
 			<div class="form-group">
@@ -14,77 +14,74 @@
 				<input type="text" th:value="${report.getContent()}" id="content" name="content" class="form-control"
 					   placeholder="留言">
 			</div>
-
 			<div class="form-group">
-				<label>开题报告上传</label>
+				<label>报告上传</label>
 				<div style="width: 1000px">
 					<div class="form-inline" >
 						<div class="form-group ">
 							<div class="form-control" style="padding: 0px">
 								<a href="javascript:;" class="file" style="width: 100%">选择文件
-									<input type="file" onchange="document.getElementById('kaiti').value=this.value" name="pic">
+									<input type="file" onchange="document.getElementById('file').value=this.value" name="pic">
 								</a>
 							</div>
 						</div>
 						<div class="form-group">
-							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="kaiti"  style="width: 400px;">
+							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="file" style="width: 400px;">
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<label>中检报告上传</label>
-				<div style="width: 1000px">
-					<div class="form-inline">
-						<div class="form-group ">
-							<div class="form-control" style="padding: 0px">
-								<a href="javascript:;" class="file" style="width: 100%">选择文件
-									<input type="file" onchange="document.getElementById('zhongjian').value=this.value" name="pic">
-								</a>
-							</div>
-						</div>
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="zhongjian"  style="width: 400px;">
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="form-group">
-				<label>结题报告上传</label>
-				<div style="width: 1000px">
-					<div class="form-inline">
-						<div class="form-group ">
-							<div class="form-control" style="padding: 0px">
-								<a href="javascript:;" class="file" style="width: 100%">选择文件
-									<input type="file" onchange="document.getElementById('choose').value=this.value" name="pic">
-								</a>
-							</div>
-						</div>
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="choose"  style="width: 400px;">
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label>答辩报告上传</label>
-				<div style="width: 1000px">
-					<div class="form-inline" >
-						<div class="form-group ">
-							<div class="form-control" style="padding: 0px">
-								<a href="javascript:;" class="file" style="width: 100%">选择文件
-									<input type="file" onchange="document.getElementById('argueReport').value=this.value" name="pic">
-								</a>
-							</div>
-						</div>
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="argueReport"  style="width: 400px;">
-						</div>
-					</div>
-				</div>
-			</div>
-
+<!--			<div class="form-group">-->
+<!--				<label>中检报告上传</label>-->
+<!--				<div style="width: 1000px">-->
+<!--					<div class="form-inline">-->
+<!--						<div class="form-group ">-->
+<!--							<div class="form-control" style="padding: 0px">-->
+<!--								<a href="javascript:;" class="file" style="width: 100%">选择文件-->
+<!--									<input type="file" onchange="document.getElementById('zhongjian').value=this.value" name="pic">-->
+<!--								</a>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="form-group">-->
+<!--							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="zhongjian"  style="width: 400px;">-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--			<div class="form-group">-->
+<!--				<label>结题报告上传</label>-->
+<!--				<div style="width: 1000px">-->
+<!--					<div class="form-inline">-->
+<!--						<div class="form-group ">-->
+<!--							<div class="form-control" style="padding: 0px">-->
+<!--								<a href="javascript:;" class="file" style="width: 100%">选择文件-->
+<!--									<input type="file" onchange="document.getElementById('choose').value=this.value" name="pic">-->
+<!--								</a>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="form-group">-->
+<!--							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="choose"  style="width: 400px;">-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--			<div class="form-group">-->
+<!--				<label>答辩报告上传</label>-->
+<!--				<div style="width: 1000px">-->
+<!--					<div class="form-inline" >-->
+<!--						<div class="form-group ">-->
+<!--							<div class="form-control" style="padding: 0px">-->
+<!--								<a href="javascript:;" class="file" style="width: 100%">选择文件-->
+<!--									<input type="file" onchange="document.getElementById('argueReport').value=this.value" name="pic">-->
+<!--								</a>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="form-group">-->
+<!--							<input type="text" class="form-control" placeholder="请选择上传文件" readonly id="argueReport"  style="width: 400px;">-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
 			<button type="submit" class="btn btn-primary">保存</button>
 		</form>
         </div>

@@ -22,13 +22,12 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         Map<String,String> map=new HashMap<>();
         map.put("/static/**", "anon");
-        map.put("/common/captcha", "anon");
-        map.put("/user/logut","logout");
+        map.put("/api/v1/captcha", "anon");
+        map.put("/api/v1/user/login","anon");
         map.put("/**","authc");
-        shiroFilterFactoryBean.setLoginUrl("/user/login");
-        shiroFilterFactoryBean.setSuccessUrl("/user/index");
+        shiroFilterFactoryBean.setLoginUrl("/login");
+        shiroFilterFactoryBean.setSuccessUrl("/index");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/user/unauthorized");
         return shiroFilterFactoryBean;
     }
 
