@@ -32,7 +32,6 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/backend?useSSL=false&characterEncoding=utf8&serverTimezone=GMT
 #    url: jdbc:mysql://120.78.185.50:3306/backend?useSSL=false&characterEncoding=utf8&serverTimezone=GMT
     driver-class-name: com.mysql.jdbc.Driver
-#    type: com.alibaba.druid.pool.DruidDataSource
   thymeleaf:
     encoding: UTF-8
     cache: false

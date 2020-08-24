@@ -1,4 +1,4 @@
-package com.example.controller.api;
+package com.example.controller;
 
 import com.example.config.KaptchaConfig;
 import com.example.util.ResultJSON;

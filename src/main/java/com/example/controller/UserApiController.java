@@ -1,4 +1,4 @@
-package com.example.controller.api;
+package com.example.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.model.User;
@@ -49,7 +49,7 @@ public class UserApiController extends BaseController {
     private String AUTH_CODE_tokenKey;
     @Value("${authCode.captchaKey}")
     private String AUTH_CODE_captchaKey;
-    private Logger logger = LoggerFactory.getLogger(UserApiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
 
     @Autowired
     private RoleService roleService;
@@ -63,7 +63,7 @@ public class UserApiController extends BaseController {
         Integer minLength=6;
         Integer maxLength=14;
         String pattern1 = "^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[\\W])[\\da-zA-Z\\W]{%s,%s}$";
-//        String emailRule =  "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
+        String emailRule =  "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
         String format = String.format(pattern1,minLength,maxLength);
         if (result.hasErrors()) {
         result.getAllErrors().forEach(err -> {
