@@ -72,16 +72,6 @@ public class RedisConfig extends CachingConfigurerSupport {
         return cacheManager;
     }
 
-//    @Bean
-//    public CacheManager cacheManager(@Autowired RedisConnectionFactory connectionFactory) {
-//        return RedisCacheManager
-//                .builder(connectionFactory)
-//                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5)))
-//                .transactionAware()
-//                .build();
-//    }
-
-
     @Bean
     @Override
     public KeyGenerator keyGenerator() {

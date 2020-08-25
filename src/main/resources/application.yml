@@ -25,6 +25,7 @@ spring:
       shutdown-timeout: 100ms
 #    password: redis123
     port: 6379
+    jessionId: sessionId
 
   datasource:
     username: root

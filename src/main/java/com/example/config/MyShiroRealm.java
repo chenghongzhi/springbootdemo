@@ -15,7 +15,6 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 

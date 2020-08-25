@@ -1,35 +1,28 @@
 package com.example.config;
 
-import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
 public class ShiroConfig {
 
-    @Bean
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
-        ShiroFilterFactoryBean shiroFilterFactoryBean=new ShiroFilterFactoryBean();
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
-        Map<String,String> map=new HashMap<>();
-        map.put("/static/**", "anon");
-        map.put("/api/v1/captcha", "anon");
-        map.put("/api/v1/user/login","anon");
-        map.put("/**","authc");
-        shiroFilterFactoryBean.setLoginUrl("/login");
-        shiroFilterFactoryBean.setSuccessUrl("/index");
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
-        return shiroFilterFactoryBean;
-    }
+    private String redisPassword;
 
     @Bean
     public MyShiroRealm myshiroRealm(){
@@ -38,7 +31,45 @@ public class ShiroConfig {
         return realm;
     }
 
-    // shiro加密
+    @Bean
+    public DefaultWebSecurityManager securityManager() {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        // 使用Redis作为缓存
+//        securityManager.setCacheManager(redisCacheManager());
+        securityManager.setSessionManager(sessionManager());
+        securityManager.setRealm(myshiroRealm());
+        return securityManager;
+    }
+
+    /**
+     * 路径过滤规则
+     * @return
+     */
+    @Bean
+    public ShiroFilterFactoryBean shiroFilter(DefaultWebSecurityManager securityManager) {
+        ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        Map<String, String> map = new LinkedHashMap<>();
+        // 有先后顺序
+        map.put("/api/v1/login", "anon");
+        map.put("/**", "authc");
+        shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
+        return shiroFilterFactoryBean;
+    }
+
+    /**
+     * 开启Shiro注解模式，可以在Controller中的方法上添加注解
+     * 如：@
+     * @param securityManager
+     * @return
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") DefaultSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+    }
+
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
@@ -50,34 +81,44 @@ public class ShiroConfig {
     }
 
     @Bean
-    public SecurityManager securityManager() {
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(myshiroRealm());
-        securityManager.setRememberMeManager(null);
-        return securityManager;
-    }
-
-    // shiro权限注解
-    @Bean
-    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
-        advisorAutoProxyCreator.setProxyTargetClass(true);
-        return advisorAutoProxyCreator;
-    }
-
-    //加入注解的使用，不加入这个注解不生效
-    @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
-        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
-        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
-        return authorizationAttributeSourceAdvisor;
+    public SessionManager sessionManager() {
+        ShiroSessionManager sessionManager = new ShiroSessionManager();
+        sessionManager.setSessionDAO(redisSessionDAO());
+        sessionManager.setSessionIdCookie(new SimpleCookie("test"));
+        return sessionManager;
     }
 
     @Bean
-    public ShiroDialect shiroDialect(){
-        return new ShiroDialect();
+    public RedisCacheManager redisCacheManager() {
+        RedisCacheManager redisCacheManager = new RedisCacheManager();
+        redisCacheManager.setRedisManager(redisManager());
+        // 选择属性字段作为缓存标识，这里选择account字段
+        redisCacheManager.setPrincipalIdFieldName("username");
+        // 设置信息缓存时间
+        redisCacheManager.setExpire(30);
+        return redisCacheManager;
     }
+
+    @Bean
+    public RedisManager redisManager() {
+        RedisManager redisManager = new RedisManager();
+        if (!StringUtils.isBlank(redisPassword)) {
+            redisManager.setPassword(redisPassword);
+        }
+        return redisManager;
+    }
+
+    @Bean
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        // 设置缓存名前缀
+        redisSessionDAO.setKeyPrefix("shiro:session:");
+        return redisSessionDAO;
+    }
+
 
 
 
 }
+

@@ -43,7 +43,6 @@ public class CaptchaController {
         BufferedImage image = kaptchaConfig.producer().createImage(text);
         ImageIO.write(image, "jpg", outputStream);
         request.getSession().setAttribute("code",text);
-        System.out.println(Base64.getEncoder().encodeToString(outputStream.toByteArray()));
         map.put("img", Base64.getEncoder().encodeToString(outputStream.toByteArray()));
         //生成验证码对应的token  以token为key  验证码为value存在redis中
         String codeToken = UUID.randomUUID().toString().replaceAll("-","").substring(0,16);
