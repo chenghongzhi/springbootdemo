@@ -17,6 +17,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -46,7 +47,7 @@ public class CaptchaController {
         map.put("img", Base64.getEncoder().encodeToString(outputStream.toByteArray()));
         //生成验证码对应的token  以token为key  验证码为value存在redis中
         String codeToken = UUID.randomUUID().toString().replaceAll("-","").substring(0,16);
-//        redisTemplate.opsForValue().set(AUTH_CODE_captchaKey+":"+codeToken, text, 10, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(AUTH_CODE_captchaKey+":"+codeToken, text, 10, TimeUnit.MINUTES);
         map.put("codeToken", codeToken);
         json.success(map);
         return json;

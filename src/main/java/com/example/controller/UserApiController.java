@@ -6,14 +6,6 @@ import com.example.service.RoleService;
 import com.example.service.UserService;
 import com.example.util.ResultJSON;
 import com.example.util.SessionManage;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -30,10 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -259,167 +249,5 @@ public class UserApiController extends BaseController {
         return json;
     }
 
-    /**
-     * 导入excel
-     * @param
-     * @param request
-     * @return
-     */
-    @PostMapping("/userExcelImport")
-    @RequiresPermissions("user:add")
-    public ResultJSON uploadUserExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
-        ResultJSON json = new ResultJSON();
-        if (file.isEmpty()) {
-            return json.failure("文件为空!");
-        }
-        try {
-            XSSFWorkbook wb = new XSSFWorkbook(file.getInputStream());
-            //根据页面index 获取sheet页
-            XSSFSheet sheet = wb.getSheetAt(0);
-            //实体类集合
-            List<User> importDatas = new ArrayList<>();
-            XSSFRow row = null;
-            //循环sesheet页中数据从第二行开始，第一行是标题
-            for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-                //获取每一行数据
-                row = sheet.getRow(i);
-                for (int j = 0; j<4 ;j++) {
-                    row.getCell(j).setCellType(CellType.STRING);
-                }
-                User user = new User();
-                if(row.getCell(0)!=null){
-                    user.setUsername(row.getCell(0).getStringCellValue());
-                }
-                if(row.getCell(1)!=null){
-                    user.setPassword(row.getCell(1).getStringCellValue());
-                }
-                if(row.getCell(2)!=null){
-                    user.setRealname(row.getCell(2).getStringCellValue());
-                }
-                String roleName = row.getCell(3).getStringCellValue();
-                Integer roleId = roleService.selectByName(roleName);
-                user.setRoleId(roleId);
-                user.setInTime(new Date());
-                importDatas.add(user);
-            }
-            for (User user : importDatas) {
-                userService.insert(user);
-            }
-            json.success("导入成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            json.failure("excel表中数据存在错误，导入失败!");
-        }
-        return json;
-    }
 
-
-    // 文件下载相关代码
-    @GetMapping("/download/cf2e2b4f-2d7b-4d5f-8417-b5b0a1f5749a")
-    public String downloadExcel(HttpServletRequest request, HttpServletResponse response) {
-        String fileName = "1.xlsx";
-        if (fileName != null) {
-            //设置文件路径
-            File file = new File(path , fileName);
-            if (file.exists()) {
-                response.setContentType("application/octet-stream");
-                response.setHeader("content-type", "application/octet-stream");
-                response.setHeader("Content-Disposition", "attachment;fileName=" + fileName);// 设置文件名
-                byte[] buffer = new byte[1024];
-                FileInputStream fis = null;
-                BufferedInputStream bis = null;
-                try {
-                    fis = new FileInputStream(file);
-                    bis = new BufferedInputStream(fis);
-                    OutputStream os = response.getOutputStream();
-                    int i = bis.read(buffer);
-                    while (i != -1) {
-                        os.write(buffer, 0, i);
-                        i = bis.read(buffer);
-                    }
-                    logger.info("文件下载成功");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (bis != null) {
-                        try {
-                            bis.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (fis != null) {
-                        try {
-                            fis.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-
-
-    @GetMapping(value = "/export")
-    public void export(HttpServletResponse response) throws IOException {
-        List<User> users = userService.selectStudent();
-
-        HSSFWorkbook wb = new HSSFWorkbook();
-
-        HSSFSheet sheet = wb.createSheet("获取excel测试表格");
-
-        HSSFRow row = null;
-
-        row = sheet.createRow(0);//创建第一个单元格
-        row.setHeight((short) (26.25 * 20));
-        row.createCell(0).setCellValue("用户信息列表");//为第一行单元格设值
-
-        /*为标题设计空间
-         * firstRow从第1行开始
-         * lastRow从第0行结束
-         *
-         *从第1个单元格开始
-         * 从第3个单元格结束
-         */
-        CellRangeAddress rowRegion = new CellRangeAddress(0, 0, 0, 2);
-        sheet.addMergedRegion(rowRegion);
-
-      /*CellRangeAddress columnRegion = new CellRangeAddress(1,4,0,0);
-      sheet.addMergedRegion(columnRegion);*/
-
-
-        /*
-         * 动态获取数据库列 sql语句 select COLUMN_NAME from INFORMATION_SCHEMA.Columns where table_name='user' and table_schema='test'
-         * 第一个table_name 表名字
-         * 第二个table_name 数据库名称
-         * */
-        row = sheet.createRow(1);
-        row.setHeight((short) (22.50 * 20));//设置行高
-        row.createCell(0).setCellValue("用户Id");//为第一个单元格设值
-        row.createCell(1).setCellValue("用户名");//为第二个单元格设值
-        row.createCell(2).setCellValue("用户密码");//为第三个单元格设值
-
-        for (int i = 0; i < users.size(); i++) {
-            row = sheet.createRow(i + 2);
-            User user = users.get(i);
-            row.createCell(0).setCellValue(user.getId());
-            row.createCell(1).setCellValue(user.getUsername());
-            row.createCell(2).setCellValue(user.getPassword());
-        }
-        sheet.setDefaultRowHeight((short) (16.5 * 20));
-        //列宽自适应
-        for (int i = 0; i <= 13; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        OutputStream os = response.getOutputStream();
-        response.setHeader("Content-disposition", "attachment;filename=user.xls");//默认Excel名称
-        wb.write(os);
-        os.flush();
-        os.close();
-    }
 }
