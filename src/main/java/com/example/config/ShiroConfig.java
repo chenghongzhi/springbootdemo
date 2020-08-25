@@ -34,8 +34,6 @@ public class ShiroConfig {
     @Bean
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        // 使用Redis作为缓存
-//        securityManager.setCacheManager(redisCacheManager());
         securityManager.setSessionManager(sessionManager());
         securityManager.setRealm(myshiroRealm());
         return securityManager;
@@ -84,8 +82,18 @@ public class ShiroConfig {
     public SessionManager sessionManager() {
         ShiroSessionManager sessionManager = new ShiroSessionManager();
         sessionManager.setSessionDAO(redisSessionDAO());
-        sessionManager.setSessionIdCookie(new SimpleCookie("test"));
+        sessionManager.setSessionIdCookie(sessionIdCookie());
+        sessionManager.setSessionIdCookieEnabled(true);
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        sessionManager.setCacheManager(redisCacheManager());
         return sessionManager;
+    }
+
+    private SimpleCookie sessionIdCookie() {
+        SimpleCookie cookie = new SimpleCookie();
+        cookie.setName("USERSESSIONID");
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 
     @Bean
